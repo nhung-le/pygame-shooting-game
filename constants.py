@@ -1,0 +1,21 @@
+ACTION_IDLE:int = 0
+ACTION_RUN:int = 1
+ACTION_JUMP:int = 2
+ANIMATION_COOLDOWN:int = 100
+#TEMPORARY_AMMO:int = 20
+
+PLAYER_HP:int = 100
+ENEMY_TNT_HP:int = 80
+BOSS_HP:int = 9999
+PLAYER_SPEED:int = 5
+ENEMY_TNT_SPEED:int = 5
+PLAYER_TAKE_DAMAGE = 5 # TODO input argument instead because depend on level and boss?
+ENEMY_TAKE_DAMAGE = 20 # TODO input argument?
+
+BULLET_RANGE:int = 0.6
+SHOOT_COOLDOWN:int = 20
+
+FPS:int = 60
+GRAVITY:float = 0.75
+SCREEN_WIDTH:int = 800
+SCREEN_HEIGHT:int = int(SCREEN_WIDTH * 0.8)
