@@ -4,7 +4,7 @@ import os
 from Bullet import Bullet
 
 class Character(pygame.sprite.Sprite):
-    def __init__(self, x, y, scale, character_type, character, speed, health):
+    def __init__(self, x, y, scale, character_type, character, speed, health, grenades):
         pygame.sprite.Sprite.__init__(self)
         self.alive = True
         self.character = character
@@ -15,6 +15,7 @@ class Character(pygame.sprite.Sprite):
         # self.ammo = constants.TEMPORARY_AMMO
         # self.start_ammo = constants.TEMPORARY_AMMO
         self.shoot_cooldown = 0
+        self.grenades = grenades
         self.health = health
         self.max_health = self.health # TODO upgrade this by level?
         self.direction = 1
@@ -34,7 +35,7 @@ class Character(pygame.sprite.Sprite):
             #count number of files in folder
             number_of_frames = len(os.listdir(f'images/{self.character_type}/{self.character}/{animation}'))
             for i in range(number_of_frames):
-                img = pygame.image.load(f'images/{self.character_type}/{self.character}/{animation}/{i}.png')
+                img = pygame.image.load(f'images/{self.character_type}/{self.character}/{animation}/{i}.png').convert_alpha()
                 img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
                 temp_list.append(img)
             self.animation_list.append(temp_list)
@@ -78,9 +79,8 @@ class Character(pygame.sprite.Sprite):
         dy += self.vel_y
 
         # Check collision with floor
-        # TODO constant number base ground
-        if self.rect.bottom + dy > 300:
-            dy = 300 - self.rect.bottom
+        if self.rect.bottom + dy > constants.BASE_GROUND:
+            dy = constants.BASE_GROUND - self.rect.bottom
             self.in_air = False
 
         # update rectangle position

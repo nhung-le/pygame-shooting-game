@@ -1,18 +1,19 @@
 import pygame
 from Character import Character
 from Bullet import Bullet
+from Grenade import Grenade
 import constants
 
 pygame.init()
 
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
-pygame.display.set_caption('Shooter')
+pygame.display.set_caption('Oh! Shoot')
 
 # set framerate
 clock = pygame.time.Clock()
 
 # player action variables
-moving_left = moving_right = shoot = False
+moving_left = moving_right = shoot = grenade = grenade_thrown = False
 
 #define colours
 BG = (251, 110, 216) # TODO update later
@@ -20,17 +21,19 @@ RED = (255, 0, 0) # TODO constant?
 
 def draw_bg():
     screen.fill(BG)
-    pygame.draw.line(screen, RED, (0, 300), (constants.SCREEN_WIDTH, 300)) # TODO 300 to constant
+    # draw base line for now
+    pygame.draw.line(screen, RED, (0, constants.BASE_GROUND), (constants.SCREEN_WIDTH, constants.BASE_GROUND))
 
 def draw_character(character):
     screen.blit(pygame.transform.flip(character.avatar, character.flip, False), character.rect)
 
 
-player = Character(200, 200, 1/12, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP)
-enemy = Character(500, 200, 1/2, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP)
+player = Character(200, 200, 1, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP, 5) # TODO constant?
+enemy = Character(500, 200, 1, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
 
 # create sprite groups
 bullet_group = pygame.sprite.Group()
+grenade_group = pygame.sprite.Group()
 
 run = True
 while run:
@@ -48,12 +51,21 @@ while run:
     # update and draw groups
     bullet_group.update(player, enemy, bullet_group)
     bullet_group.draw(screen)
+    grenade_group.update()
+    grenade_group.draw(screen)
 
     # update player actions
     if player.alive:
         # shooting
         if shoot:
             player.shoot(bullet_group)
+        # throw grenades
+        elif grenade and grenade_thrown == False and player.grenades > 0:
+            grenade = Grenade(player.rect.centerx + (0.5 * player.rect.size[0] * player.direction), player.rect.top, player.direction)
+            grenade_group.add(grenade)
+            # reduce grenades
+            player.grenades -= 1
+            grenade_thrown = True
         if player.in_air:
             player.update_action(constants.ACTION_JUMP)
         elif moving_left or moving_right:
@@ -74,6 +86,8 @@ while run:
                 moving_right = True
             if event.key == pygame.K_SPACE: # TODO maybe should always let it shoot?
                 shoot = True
+            if event.key == pygame.K_q:
+                grenade = True
             if (event.key == pygame.K_w or event.key == pygame.K_UP) and player.alive:
                 player.jump = True
             if event.key == pygame.K_ESCAPE:
@@ -87,6 +101,9 @@ while run:
                 moving_right = False
             if event.key == pygame.K_SPACE: # TODO remove later
                 shoot = False
+            if event.key == pygame.K_q:
+                grenade = False
+                grenade_thrown = False
 
 
     pygame.display.update()

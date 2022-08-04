@@ -12,10 +12,14 @@ ENEMY_TNT_SPEED:int = 5
 PLAYER_TAKE_DAMAGE = 5 # TODO input argument instead because depend on level and boss?
 ENEMY_TAKE_DAMAGE = 20 # TODO input argument?
 
-BULLET_RANGE:int = 0.6
+BULLET_RANGE:float = 0.6
+BULLET_SPEED:int = 10
 SHOOT_COOLDOWN:int = 20
+GRENADE_TIMER:int = 100
+GRENADE_SPEED:int = 7
 
 FPS:int = 60
 GRAVITY:float = 0.75
 SCREEN_WIDTH:int = 800
 SCREEN_HEIGHT:int = int(SCREEN_WIDTH * 0.8)
+BASE_GROUND:int = 300
