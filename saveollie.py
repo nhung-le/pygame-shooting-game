@@ -2,11 +2,13 @@ import pygame
 from Character import Character
 from Bullet import Bullet
 from Grenade import Grenade
+from Explosion import Explosion
 import constants
 
 pygame.init()
 
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
+#FULL SCREEN: screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('Oh! Shoot')
 
 # set framerate
@@ -16,7 +18,7 @@ clock = pygame.time.Clock()
 moving_left = moving_right = shoot = grenade = grenade_thrown = False
 
 #define colours
-BG = (251, 110, 216) # TODO update later
+BG = (144, 201, 120) # TODO update later
 RED = (255, 0, 0) # TODO constant?
 
 def draw_bg():
@@ -27,17 +29,21 @@ def draw_bg():
 def draw_character(character):
     screen.blit(pygame.transform.flip(character.avatar, character.flip, False), character.rect)
 
+# create sprite groups
+enemy_group = pygame.sprite.Group()
+bullet_group = pygame.sprite.Group()
+grenade_group = pygame.sprite.Group()
+explosion_group = pygame.sprite.Group()
 
 player = Character(200, 200, 1, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP, 5) # TODO constant?
 enemy = Character(500, 200, 1, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
+enemy2 = Character(300, 200, 1, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
+enemy_group.add(enemy)
+enemy_group.add(enemy2)
 
-# create sprite groups
-bullet_group = pygame.sprite.Group()
-grenade_group = pygame.sprite.Group()
 
 run = True
 while run:
-
     clock.tick(constants.FPS)
 
     draw_bg()
@@ -45,14 +51,17 @@ while run:
     player.update()
     draw_character(player)
 
-    enemy.update()
-    draw_character(enemy)
+    for enemy in enemy_group:
+        enemy.update()
+        draw_character(enemy)
 
     # update and draw groups
-    bullet_group.update(player, enemy, bullet_group)
     bullet_group.draw(screen)
-    grenade_group.update()
+    bullet_group.update(player, enemy_group, bullet_group)
     grenade_group.draw(screen)
+    grenade_group.update(player, enemy_group)
+    explosion_group.draw(screen)
+    explosion_group.update()
 
     # update player actions
     if player.alive:
@@ -61,7 +70,7 @@ while run:
             player.shoot(bullet_group)
         # throw grenades
         elif grenade and grenade_thrown == False and player.grenades > 0:
-            grenade = Grenade(player.rect.centerx + (0.5 * player.rect.size[0] * player.direction), player.rect.top, player.direction)
+            grenade = Grenade(player.rect.centerx + (0.5 * player.rect.size[0] * player.direction), player.rect.top, player.direction, explosion_group)
             grenade_group.add(grenade)
             # reduce grenades
             player.grenades -= 1
@@ -104,9 +113,5 @@ while run:
             if event.key == pygame.K_q:
                 grenade = False
                 grenade_thrown = False
-
-
     pygame.display.update()
-
-
 pygame.quit()

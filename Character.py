@@ -121,4 +121,4 @@ class Character(pygame.sprite.Sprite):
             self.health = 0
             self.speed = 0
             self.alive = False
-            self.update_action(3) # death
+            self.update_action(3) # death TODO do we need to kill object for enemy type as well?
