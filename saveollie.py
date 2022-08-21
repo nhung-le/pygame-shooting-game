@@ -1,14 +1,14 @@
 import pygame
-from Character import Character
+from Character import Character, HealthBar
 from Bullet import Bullet
 from Grenade import Grenade
 from Explosion import Explosion
+from ItemBox import ItemBox
 import constants
 
 pygame.init()
 
 screen = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
-#FULL SCREEN: screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption('Oh! Shoot')
 
 # set framerate
@@ -19,23 +19,38 @@ moving_left = moving_right = shoot = grenade = grenade_thrown = False
 
 #define colours
 BG = (144, 201, 120) # TODO update later
-RED = (255, 0, 0) # TODO constant?
 
+# not using yet
+font = pygame.font.SysFont('Futura', 30)
+
+# draw BG
 def draw_bg():
     screen.fill(BG)
     # draw base line for now
-    pygame.draw.line(screen, RED, (0, constants.BASE_GROUND), (constants.SCREEN_WIDTH, constants.BASE_GROUND))
+    pygame.draw.line(screen, constants.RED, (0, constants.BASE_GROUND), (constants.SCREEN_WIDTH, constants.BASE_GROUND))
 
-def draw_character(character):
-    screen.blit(pygame.transform.flip(character.avatar, character.flip, False), character.rect)
+# draw text
+def draw_text(text, font, text_color, x, y):
+    img = font.render(text, True, text_color)
+    screen.blit(img, (x,y))
 
 # create sprite groups
 enemy_group = pygame.sprite.Group()
 bullet_group = pygame.sprite.Group()
 grenade_group = pygame.sprite.Group()
 explosion_group = pygame.sprite.Group()
+item_box_group = pygame.sprite.Group()
 
-player = Character(200, 200, 1, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP, 5) # TODO constant?
+
+#temp - create item boxes TODO remove later
+item_box_hp = ItemBox(constants.ITEM_BOX_NAME_HEALTH, 600, constants.BASE_GROUND - 100) # TODO aim manually lol
+item_box_group.add(item_box_hp)
+item_box_grenade = ItemBox(constants.ITEM_BOX_NAME_GRENADE, 500, constants.BASE_GROUND - 100)
+item_box_group.add(item_box_grenade)
+
+player = Character(200, 200, 1, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP, 5) # TODO constant grenades?
+health_bar = HealthBar(10, 10, player.health, player.max_health)
+
 enemy = Character(500, 200, 1, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
 enemy2 = Character(300, 200, 1, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
 enemy_group.add(enemy)
@@ -47,13 +62,17 @@ while run:
     clock.tick(constants.FPS)
 
     draw_bg()
+    # show user's stats
+    health_bar.draw(screen, player.health)
+    for x in range(player.grenades):
+        screen.blit(pygame.image.load('images/icons/grenade_tiny.png').convert_alpha(), (10 + (x * 15), 50))
 
     player.update()
-    draw_character(player)
+    player.draw(screen)
 
     for enemy in enemy_group:
         enemy.update()
-        draw_character(enemy)
+        enemy.draw(screen)
 
     # update and draw groups
     bullet_group.draw(screen)
@@ -62,6 +81,9 @@ while run:
     grenade_group.update(player, enemy_group)
     explosion_group.draw(screen)
     explosion_group.update()
+    item_box_group.draw(screen)
+    item_box_group.update(player)
+
 
     # update player actions
     if player.alive:

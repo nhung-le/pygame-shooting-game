@@ -1,3 +1,13 @@
+import string
+
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+
+HEALTH_BAR_WIDTH:int = 150
+HEALTH_BAR_HEIGHT:int = 20
+
 ACTION_IDLE:int = 0
 ACTION_RUN:int = 1
 ACTION_JUMP:int = 2
@@ -25,3 +35,8 @@ GRAVITY:float = 0.75
 SCREEN_WIDTH:int = 800
 SCREEN_HEIGHT:int = int(SCREEN_WIDTH * 0.8)
 BASE_GROUND:int = 300
+
+ITEM_BOX_NAME_HEALTH:string = 'Health'
+ITEM_BOX_NAME_GRENADE:string = 'Grenade'
+ITEM_BOX_VALUE_HEALTH:int = 25
+ITEM_BOX_VALUE_GRENADE:int = 2

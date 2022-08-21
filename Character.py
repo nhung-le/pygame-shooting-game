@@ -43,6 +43,12 @@ class Character(pygame.sprite.Sprite):
         self.avatar = self.animation_list[self.action][self.frame_index]
         self.rect = self.avatar.get_rect()
         self.rect.center = (x, y)
+        
+    def draw(self, screen):
+        screen.blit(pygame.transform.flip(self.avatar, self.flip, False), self.rect)
+        # TODO test rect
+        # pygame.draw.rect(screen, BLACK, self.rect, 1)
+
     
     def update(self):
         self.update_animation()
@@ -99,7 +105,7 @@ class Character(pygame.sprite.Sprite):
         self.avatar = self.animation_list[self.action][self.frame_index]
         # check if enough time has passed since the last update
         if pygame.time.get_ticks() - self.update_time > constants.ANIMATION_COOLDOWN:
-            self.update_time =  pygame.time.get_ticks()
+            self.update_time = pygame.time.get_ticks()
             self.frame_index += 1
         # if animation run out then reset back to start
         if self.frame_index >= len(self.animation_list[self.action]):
@@ -122,3 +128,18 @@ class Character(pygame.sprite.Sprite):
             self.speed = 0
             self.alive = False
             self.update_action(3) # death TODO do we need to kill object for enemy type as well?
+            
+class HealthBar():
+    def __init__(self, x, y, health, max_health):
+        self.x = x
+        self.y = y
+        self.health = health
+        self.max_health = max_health
+    def draw(self, screen, health):
+        # update with new health
+        self.health = health
+        # calculate health ratio
+        ratio = self.health / self.max_health
+        pygame.draw.rect(screen, constants.BLACK, (self.x-2, self.y-2, constants.HEALTH_BAR_WIDTH, constants.HEALTH_BAR_HEIGHT), 1)
+        pygame.draw.rect(screen, constants.RED, (self.x, self.y, constants.HEALTH_BAR_WIDTH, constants.HEALTH_BAR_HEIGHT))
+        pygame.draw.rect(screen, constants.GREEN, (self.x, self.y, constants.HEALTH_BAR_WIDTH * ratio, constants.HEALTH_BAR_HEIGHT))
