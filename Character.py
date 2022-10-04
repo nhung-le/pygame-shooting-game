@@ -1,6 +1,7 @@
 import constants
 import pygame
 import os
+import random
 from Bullet import Bullet
 
 class Character(pygame.sprite.Sprite):
@@ -27,6 +28,11 @@ class Character(pygame.sprite.Sprite):
         self.frame_index = 0
         self.action = 0
         self.update_time = pygame.time.get_ticks() # next animation
+        
+        # ai specific variables
+        self.move_counter = self.idling_counter = 0
+        self.vision = pygame.Rect(0, 0, 150, 20) # 150 = how far they can look TODO constant
+        self.idling = False
 
         #load all images for players
         animation_types = ['idle', 'run', 'jump', 'death']
@@ -98,6 +104,44 @@ class Character(pygame.sprite.Sprite):
             self.shoot_cooldown = constants.SHOOT_COOLDOWN
             bullet = Bullet(self.rect.centerx + (constants.BULLET_RANGE * self.rect.size[0] * self.direction ), self.rect.centery, self.direction)
             bullet_group.add(bullet)
+    
+    def ai(self, player, bullet_group): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
+        if self.alive and player.alive:
+            if self.idling == False and random.randint(1, 200) == 1: # sometimes stopped
+                self.update_action(constants.ACTION_IDLE)
+                self.idling = True
+                self.idling_counter = 50
+            # check if the  ai in near the player
+            if self.vision.colliderect(player.rect):
+                # TODO different depend on type of enemy, might not shoot but explode
+                # stop running and face the player
+                self.update_action(constants.ACTION_IDLE)
+                # shoot
+                self.shoot(bullet_group)
+            else:
+                if self.idling == False:
+                    if self.direction == 1:
+                        ai_moving_right = True
+                    else:
+                        ai_moving_right = False
+                    ai_moving_left = not ai_moving_right
+                    self.move(ai_moving_left, ai_moving_right)
+                    self.update_action(constants.ACTION_RUN)
+                    # TODO maybe upgrade to find and run to player
+                    self.move_counter += 1
+                    # update ai vision as the enemy moves
+                    # TODO should still have when idle depend on the type of enemy
+                    self.vision.center = (self.rect.centerx + 75 * self.direction, self.rect.centery) # TODO constant
+                    # draw vision: pygame.draw.rect(screen, constants.RED, self.vision)
+                    
+                    if self.move_counter > constants.TILE_SIZE:
+                        self.direction *= -1
+                        self.move_counter *= -1
+                else: # and then move again after stopped at sometime
+                    self.idling_counter -=1
+                    if self.idling_counter <= 0:
+                        self.idling = False
+            
 
     def update_animation(self):
         # update animation

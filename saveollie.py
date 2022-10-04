@@ -4,7 +4,9 @@ from Bullet import Bullet
 from Grenade import Grenade
 from Explosion import Explosion
 from ItemBox import ItemBox
+from World import World
 import constants
+import csv
 
 pygame.init()
 
@@ -19,6 +21,7 @@ moving_left = moving_right = shoot = grenade = grenade_thrown = False
 
 #define colours
 BG = (144, 201, 120) # TODO update later
+level = 1
 
 # not using yet
 font = pygame.font.SysFont('Futura', 30)
@@ -40,28 +43,50 @@ bullet_group = pygame.sprite.Group()
 grenade_group = pygame.sprite.Group()
 explosion_group = pygame.sprite.Group()
 item_box_group = pygame.sprite.Group()
+water_group = pygame.sprite.Group()
+decoration_group = pygame.sprite.Group()
+exit_group = pygame.sprite.Group()
 
 
-#temp - create item boxes TODO remove later
-item_box_hp = ItemBox(constants.ITEM_BOX_NAME_HEALTH, 600, constants.BASE_GROUND - 100) # TODO aim manually lol
-item_box_group.add(item_box_hp)
-item_box_grenade = ItemBox(constants.ITEM_BOX_NAME_GRENADE, 500, constants.BASE_GROUND - 100)
-item_box_group.add(item_box_grenade)
+#temp - create item boxes
+# TODO REMOVE LATER. MOVED TO WORLD
+# item_box_hp = ItemBox(constants.ITEM_BOX_NAME_HEALTH, 600, constants.BASE_GROUND - 100) # TODO aim manually lol
+# item_box_group.add(item_box_hp)
+# item_box_grenade = ItemBox(constants.ITEM_BOX_NAME_GRENADE, 500, constants.BASE_GROUND - 100)
+# item_box_group.add(item_box_grenade)
 
-player = Character(200, 200, 1, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP, 5) # TODO constant grenades?
-health_bar = HealthBar(10, 10, player.health, player.max_health)
+# player = Character(200, 200, 0.65, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP, constants.GRENADE_NUMBER)
+# health_bar = HealthBar(10, 10, player.health, player.max_health)
 
-enemy = Character(500, 200, 1, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
-enemy2 = Character(300, 200, 1, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
-enemy_group.add(enemy)
-enemy_group.add(enemy2)
+# enemy = Character(500, 200, 0.65, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
+# enemy2 = Character(300, 200, 0.65, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
+# enemy_group.add(enemy)
+# enemy_group.add(enemy2)
+# TODO END REMOVE LATER
+
+# create empty tile list
+world_data = []
+for row in range(constants.ROWS):
+    r = [-1] * constants.COLS
+    world_data.append(r)
+# load in level data and create world
+with open(f'levels/level{level}_data.csv', newline='') as csvfile:
+    reader = csv.reader(csvfile, delimiter=',')
+    for x, row in enumerate(reader):
+        for y, tile in enumerate(row):
+             world_data[x][y] = int(tile)
+world = World()
+player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group)
 
 
 run = True
 while run:
     clock.tick(constants.FPS)
 
+    # update background
     draw_bg()
+    # draw world map
+    world.draw(screen)
     # show user's stats
     health_bar.draw(screen, player.health)
     for x in range(player.grenades):
@@ -71,6 +96,7 @@ while run:
     player.draw(screen)
 
     for enemy in enemy_group:
+        enemy.ai(player, bullet_group)
         enemy.update()
         enemy.draw(screen)
 
@@ -83,6 +109,13 @@ while run:
     explosion_group.update()
     item_box_group.draw(screen)
     item_box_group.update(player)
+    water_group.draw(screen)
+    water_group.update()
+    decoration_group.draw(screen)
+    decoration_group.update()
+    exit_group.draw(screen)
+    exit_group.update()
+
 
 
     # update player actions
@@ -115,11 +148,11 @@ while run:
                 moving_left = True
             if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 moving_right = True
-            if event.key == pygame.K_SPACE: # TODO maybe should always let it shoot?
+            if event.key == pygame.K_RETURN: # TODO maybe should always let it shoot?
                 shoot = True
             if event.key == pygame.K_q:
                 grenade = True
-            if (event.key == pygame.K_w or event.key == pygame.K_UP) and player.alive:
+            if (event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_SPACE) and player.alive:
                 player.jump = True
             if event.key == pygame.K_ESCAPE:
                 run = False
@@ -130,7 +163,7 @@ while run:
                 moving_left = False
             if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 moving_right = False
-            if event.key == pygame.K_SPACE: # TODO remove later
+            if event.key == pygame.K_RETURN:
                 shoot = False
             if event.key == pygame.K_q:
                 grenade = False

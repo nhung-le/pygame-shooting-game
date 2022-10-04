@@ -11,6 +11,7 @@ class ItemBox(pygame.sprite.Sprite):
         self.item_type = item_type
         self.image = item_boxes[self.item_type]
         self.rect = self.image.get_rect()
+        # TODO update position of item depend on map later
         self.rect.midtop = (x + constants.TILE_SIZE // 2, y + (constants.TILE_SIZE - self.image.get_height()))
         
     def update(self, player):
