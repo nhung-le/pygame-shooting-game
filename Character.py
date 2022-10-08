@@ -49,6 +49,8 @@ class Character(pygame.sprite.Sprite):
         self.avatar = self.animation_list[self.action][self.frame_index]
         self.rect = self.avatar.get_rect()
         self.rect.center = (x, y)
+        self.width = self.avatar.get_width()
+        self.height = self.avatar.get_height()
         
     def draw(self, screen):
         screen.blit(pygame.transform.flip(self.avatar, self.flip, False), self.rect)
@@ -64,7 +66,7 @@ class Character(pygame.sprite.Sprite):
             # TODO ammo add condition and self.ammo > 0
             self.shoot_cooldown -= 1
 
-    def move(self, moving_left, moving_right):
+    def move(self, moving_left, moving_right, world):
         #reset movement
         dx = dy = 0
 
@@ -80,7 +82,7 @@ class Character(pygame.sprite.Sprite):
         
         #jump
         if self.jump == True and self.in_air == False:
-            self.vel_y = -11 # jump range TODO put in constant?
+            self.vel_y = -11 # jump RANGE TODO put in constant?
             self.jump = False
             self.in_air = True
         
@@ -90,10 +92,21 @@ class Character(pygame.sprite.Sprite):
             self.vel_y
         dy += self.vel_y
 
-        # Check collision with floor
-        if self.rect.bottom + dy > constants.BASE_GROUND:
-            dy = constants.BASE_GROUND - self.rect.bottom
-            self.in_air = False
+        # Check for collision
+        for tile in world.obstacle_list:
+            # If there is a collision, move out of the way and stop the player from moving.
+            if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height): # check x direction
+                dx = 0
+            if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height): # check y direction
+                # check if below the ground, (i.e: if the player is jumping)
+                if self.vel_y < 0:
+                    self.vel_y = 0
+                    dy = tile[1].bottom - self.rect.top
+                # check if above the ground, (i.e: if the player is falling)
+                if self.vel_y > 0:
+                    self.vel_y = 0
+                    self.in_air = False
+                    dy = tile[1].top - self.rect.bottom
 
         # update rectangle position
         self.rect.x += dx
@@ -105,7 +118,7 @@ class Character(pygame.sprite.Sprite):
             bullet = Bullet(self.rect.centerx + (constants.BULLET_RANGE * self.rect.size[0] * self.direction ), self.rect.centery, self.direction)
             bullet_group.add(bullet)
     
-    def ai(self, player, bullet_group): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
+    def ai(self, player, bullet_group, world): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
         if self.alive and player.alive:
             if self.idling == False and random.randint(1, 200) == 1: # sometimes stopped
                 self.update_action(constants.ACTION_IDLE)
@@ -125,7 +138,7 @@ class Character(pygame.sprite.Sprite):
                     else:
                         ai_moving_right = False
                     ai_moving_left = not ai_moving_right
-                    self.move(ai_moving_left, ai_moving_right)
+                    self.move(ai_moving_left, ai_moving_right, world)
                     self.update_action(constants.ACTION_RUN)
                     # TODO maybe upgrade to find and run to player
                     self.move_counter += 1

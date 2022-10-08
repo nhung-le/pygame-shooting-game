@@ -29,8 +29,6 @@ font = pygame.font.SysFont('Futura', 30)
 # draw BG
 def draw_bg():
     screen.fill(BG)
-    # draw base line for now
-    pygame.draw.line(screen, constants.RED, (0, constants.BASE_GROUND), (constants.SCREEN_WIDTH, constants.BASE_GROUND))
 
 # draw text
 def draw_text(text, font, text_color, x, y):
@@ -46,23 +44,6 @@ item_box_group = pygame.sprite.Group()
 water_group = pygame.sprite.Group()
 decoration_group = pygame.sprite.Group()
 exit_group = pygame.sprite.Group()
-
-
-#temp - create item boxes
-# TODO REMOVE LATER. MOVED TO WORLD
-# item_box_hp = ItemBox(constants.ITEM_BOX_NAME_HEALTH, 600, constants.BASE_GROUND - 100) # TODO aim manually lol
-# item_box_group.add(item_box_hp)
-# item_box_grenade = ItemBox(constants.ITEM_BOX_NAME_GRENADE, 500, constants.BASE_GROUND - 100)
-# item_box_group.add(item_box_grenade)
-
-# player = Character(200, 200, 0.65, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP, constants.GRENADE_NUMBER)
-# health_bar = HealthBar(10, 10, player.health, player.max_health)
-
-# enemy = Character(500, 200, 0.65, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
-# enemy2 = Character(300, 200, 0.65, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
-# enemy_group.add(enemy)
-# enemy_group.add(enemy2)
-# TODO END REMOVE LATER
 
 # create empty tile list
 world_data = []
@@ -96,15 +77,15 @@ while run:
     player.draw(screen)
 
     for enemy in enemy_group:
-        enemy.ai(player, bullet_group)
+        enemy.ai(player, bullet_group, world)
         enemy.update()
         enemy.draw(screen)
 
     # update and draw groups
     bullet_group.draw(screen)
-    bullet_group.update(player, enemy_group, bullet_group)
+    bullet_group.update(player, enemy_group, bullet_group, world)
     grenade_group.draw(screen)
-    grenade_group.update(player, enemy_group)
+    grenade_group.update(player, enemy_group, world)
     explosion_group.draw(screen)
     explosion_group.update()
     item_box_group.draw(screen)
@@ -136,7 +117,7 @@ while run:
             player.update_action(constants.ACTION_RUN)
         else:
             player.update_action(constants.ACTION_IDLE)
-        player.move(moving_left, moving_right)
+        player.move(moving_left, moving_right, world)
 
     for event in pygame.event.get():
         #quit game
