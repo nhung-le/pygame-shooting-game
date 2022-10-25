@@ -32,6 +32,7 @@ EXPLOSION_SPEED:int = 4
 
 FPS:int = 60
 GRAVITY:float = 0.75
+SCROLL_THRESH:int = 200
 SCREEN_WIDTH:int = 800
 SCREEN_HEIGHT:int = int(SCREEN_WIDTH * 0.8)
 BASE_GROUND:int = 300
@@ -42,5 +43,7 @@ TILE_TYPES:int = 21 # TODO BLOCK types update later
 
 ITEM_BOX_NAME_HEALTH:string = 'Health'
 ITEM_BOX_NAME_GRENADE:string = 'Grenade'
+ITEM_BOX_NAME_COIN:string = 'Coin'
 ITEM_BOX_VALUE_HEALTH:int = 25
+ITEM_BOX_VALUE_COIN:int = 100
 ITEM_BOX_VALUE_GRENADE:int = 2

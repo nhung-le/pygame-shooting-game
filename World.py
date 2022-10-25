@@ -50,15 +50,16 @@ class World():
                         item_box_grenade = ItemBox(constants.ITEM_BOX_NAME_GRENADE, 500, constants.BASE_GROUND - 100)
                         item_box_group.add(item_box_grenade)
                     elif tile == 19:
-                        # TODO
-                        pass#create coin box (when enemy dies and random)
+                        item_box_coin = ItemBox(constants.ITEM_BOX_NAME_COIN, x * constants.TILE_SIZE, y * constants.TILE_SIZE)
+                        item_box_group.add(item_box_coin)
                     elif tile == 20: #create exit
                         exit = Exit(img, x * constants.TILE_SIZE, y * constants.TILE_SIZE)
                         exit_group.add(exit)
         return player, health_bar
     
-    def draw(self, screen):
+    def draw(self, screen, screen_scroll):
         for tile in self.obstacle_list:
+            tile[1][0] += screen_scroll
             screen.blit(tile[0], tile[1])
 
 

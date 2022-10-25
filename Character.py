@@ -17,6 +17,7 @@ class Character(pygame.sprite.Sprite):
         # self.start_ammo = constants.TEMPORARY_AMMO
         self.shoot_cooldown = 0
         self.grenades = grenades
+        self.coin = 0
         self.health = health
         self.max_health = self.health # TODO upgrade this by level?
         self.direction = 1
@@ -68,6 +69,7 @@ class Character(pygame.sprite.Sprite):
 
     def move(self, moving_left, moving_right, world):
         #reset movement
+        screen_scroll = 0
         dx = dy = 0
 
         # assign movement variables if moving left or right
@@ -111,6 +113,14 @@ class Character(pygame.sprite.Sprite):
         # update rectangle position
         self.rect.x += dx
         self.rect.y += dy
+        
+        # update scroll based on player position
+        if self.character_type ==  'player':
+            if self.rect.right > constants.SCREEN_WIDTH - constants.SCROLL_THRESH or self.rect.left < constants.SCROLL_THRESH:
+                self.rect.x -= dx
+                screen_scroll = -dx
+        
+        return screen_scroll
 
     def shoot(self, bullet_group):
         if self.shoot_cooldown == 0:

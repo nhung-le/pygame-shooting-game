@@ -21,6 +21,10 @@ moving_left = moving_right = shoot = grenade = grenade_thrown = False
 
 #define colours
 BG = (144, 201, 120) # TODO update later
+bg = pygame.image.load('images/background/bg1.png').convert_alpha()
+bg_x = 0
+screen_scroll = 0
+bg_scroll = 0
 level = 1
 
 # not using yet
@@ -29,6 +33,10 @@ font = pygame.font.SysFont('Futura', 30)
 # draw BG
 def draw_bg():
     screen.fill(BG)
+    rel_x = bg_x % bg.get_rect().width
+    screen.blit(bg, (rel_x - bg.get_rect().width, 0))
+    if rel_x < constants.SCREEN_WIDTH:
+        screen.blit(bg, (rel_x, 0))
 
 # draw text
 def draw_text(text, font, text_color, x, y):
@@ -59,6 +67,10 @@ with open(f'levels/level{level}_data.csv', newline='') as csvfile:
 world = World()
 player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group)
 
+# TODO move to top later
+# DS-Digital font
+font = pygame.font.Font('freesansbold.ttf', 20)
+
 
 run = True
 while run:
@@ -67,9 +79,18 @@ while run:
     # update background
     draw_bg()
     # draw world map
-    world.draw(screen)
+    world.draw(screen, screen_scroll)
     # show user's stats
     health_bar.draw(screen, player.health)
+    text = font.render(str(player.coin), True, constants.WHITE)
+    textRect = text.get_rect()
+    textRect.center = (60, 110)
+
+
+    screen.blit(pygame.image.load('images/icons/coin.png').convert_alpha(), (10, 90))
+    screen.blit(text, textRect)
+
+    # pygame.draw.rect(screen, constants.BLACK, (self.x-2, self.y-2, constants.HEALTH_BAR_WIDTH, constants.HEALTH_BAR_HEIGHT), 1)
     for x in range(player.grenades):
         screen.blit(pygame.image.load('images/icons/grenade_tiny.png').convert_alpha(), (10 + (x * 15), 50))
 
@@ -117,7 +138,8 @@ while run:
             player.update_action(constants.ACTION_RUN)
         else:
             player.update_action(constants.ACTION_IDLE)
-        player.move(moving_left, moving_right, world)
+        screen_scroll = player.move(moving_left, moving_right, world)
+        bg_x += screen_scroll
 
     for event in pygame.event.get():
         #quit game

@@ -6,7 +6,8 @@ class ItemBox(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         item_boxes = {
             constants.ITEM_BOX_NAME_HEALTH  : pygame.image.load('images/icons/health_box.png').convert_alpha(),
-            constants.ITEM_BOX_NAME_GRENADE : pygame.image.load('images/icons/grenade_box.png').convert_alpha()
+            constants.ITEM_BOX_NAME_GRENADE : pygame.image.load('images/icons/grenade_box.png').convert_alpha(),
+            constants.ITEM_BOX_NAME_COIN    : pygame.image.load('images/icons/coin.png').convert_alpha() # TODO animation coin
         }
         self.item_type = item_type
         self.image = item_boxes[self.item_type]
@@ -24,4 +25,6 @@ class ItemBox(pygame.sprite.Sprite):
                     player.health = player.max_health
             elif self.item_type == constants.ITEM_BOX_NAME_GRENADE:
                 player.grenades += constants.ITEM_BOX_VALUE_GRENADE
+            elif self.item_type == constants.ITEM_BOX_NAME_COIN:
+                player.coin += constants.ITEM_BOX_VALUE_COIN
             self.kill()
