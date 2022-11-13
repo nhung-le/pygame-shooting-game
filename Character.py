@@ -67,7 +67,7 @@ class Character(pygame.sprite.Sprite):
             # TODO ammo add condition and self.ammo > 0
             self.shoot_cooldown -= 1
 
-    def move(self, moving_left, moving_right, world):
+    def move(self, moving_left, moving_right, world, bg_scroll, water_group):
         #reset movement
         screen_scroll = 0
         dx = dy = 0
@@ -99,6 +99,10 @@ class Character(pygame.sprite.Sprite):
             # If there is a collision, move out of the way and stop the player from moving.
             if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height): # check x direction
                 dx = 0
+                # if the ai has hit the wall then make it turn around
+                if self.character_type == 'enemy':
+                    self.direction *= -1
+                    self.move_counter = 0
             if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height): # check y direction
                 # check if below the ground, (i.e: if the player is jumping)
                 if self.vel_y < 0:
@@ -109,14 +113,28 @@ class Character(pygame.sprite.Sprite):
                     self.vel_y = 0
                     self.in_air = False
                     dy = tile[1].top - self.rect.bottom
-
+                    
+        # check for collision with water / lava
+        if pygame.sprite.spritecollide(self, water_group, False):
+            self.health = 0
+        
+        # check if fallen off  the map
+        if self.rect.bottom > constants.SCREEN_HEIGHT:
+            self.health = 0
+        
+        # check if going of the edges of the screen
+        if self.character_type == 'player':
+            if self.rect.left + dx < 0 or self.rect.right + dx > constants.SCREEN_WIDTH:
+                dx = 0
+            
         # update rectangle position
         self.rect.x += dx
         self.rect.y += dy
         
         # update scroll based on player position
         if self.character_type ==  'player':
-            if self.rect.right > constants.SCREEN_WIDTH - constants.SCROLL_THRESH or self.rect.left < constants.SCROLL_THRESH:
+            if (self.rect.right > constants.SCREEN_WIDTH - constants.SCROLL_THRESH and bg_scroll < (world.level_length * constants.TILE_SIZE) - constants.SCREEN_WIDTH)\
+                or (self.rect.left < constants.SCROLL_THRESH and bg_scroll > abs(dx)):
                 self.rect.x -= dx
                 screen_scroll = -dx
         
@@ -128,7 +146,7 @@ class Character(pygame.sprite.Sprite):
             bullet = Bullet(self.rect.centerx + (constants.BULLET_RANGE * self.rect.size[0] * self.direction ), self.rect.centery, self.direction)
             bullet_group.add(bullet)
     
-    def ai(self, player, bullet_group, world): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
+    def ai(self, player, bullet_group, world, screen_scroll, bg_scroll, water_group): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
         if self.alive and player.alive:
             if self.idling == False and random.randint(1, 200) == 1: # sometimes stopped
                 self.update_action(constants.ACTION_IDLE)
@@ -148,7 +166,7 @@ class Character(pygame.sprite.Sprite):
                     else:
                         ai_moving_right = False
                     ai_moving_left = not ai_moving_right
-                    self.move(ai_moving_left, ai_moving_right, world)
+                    self.move(ai_moving_left, ai_moving_right, world, bg_scroll, water_group)
                     self.update_action(constants.ACTION_RUN)
                     # TODO maybe upgrade to find and run to player
                     self.move_counter += 1
@@ -164,6 +182,8 @@ class Character(pygame.sprite.Sprite):
                     self.idling_counter -=1
                     if self.idling_counter <= 0:
                         self.idling = False
+        # scroll                
+        self.rect.x += screen_scroll
             
 
     def update_animation(self):

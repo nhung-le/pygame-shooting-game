@@ -14,10 +14,12 @@ class Explosion(pygame.sprite.Sprite):
         self.frame_index = 0
         self.image = self.images[self.frame_index]
         self.rect = self.image.get_rect()
-        self.rect.center = (x, y)
+        self.rect.center = (x, y-50)
         self.counter = 0
     
-    def update(self):
+    def update(self, screen_scroll):
+        # scroll
+        self.rect.x += screen_scroll
         # update explosion animation
         self.counter += 1
         if self.counter >= constants.EXPLOSION_SPEED:

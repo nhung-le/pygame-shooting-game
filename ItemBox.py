@@ -15,7 +15,8 @@ class ItemBox(pygame.sprite.Sprite):
         # TODO update position of item depend on map later
         self.rect.midtop = (x + constants.TILE_SIZE // 2, y + (constants.TILE_SIZE - self.image.get_height()))
         
-    def update(self, player):
+    def update(self, player, screen_scroll):
+        self.rect.x += screen_scroll
         # check if the player have picked up the box
         if pygame.sprite.collide_rect(self, player):
             # check what kind of box it was

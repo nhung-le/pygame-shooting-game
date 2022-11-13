@@ -16,6 +16,7 @@ class World():
             self.img_list.append(img)
         
     def process_data(self, data, enemy_group, item_box_group, water_group, decoration_group, exit_group):
+        self.level_length = len(data[0])
         # iterate through each value in level file
         for y, row in enumerate(data):
             for x, tile in enumerate(row):
@@ -44,10 +45,10 @@ class World():
                         # enemy_group.add(enemy2)
                         enemy_group.add(enemy)
                     elif tile == 17: # create item box
-                        item_box_hp = ItemBox(constants.ITEM_BOX_NAME_HEALTH, 600, constants.BASE_GROUND - 100) # TODO aim manually lol
+                        item_box_hp = ItemBox(constants.ITEM_BOX_NAME_HEALTH, x * constants.TILE_SIZE, y * constants.TILE_SIZE) # TODO aim manually lol
                         item_box_group.add(item_box_hp)
                     elif tile == 18: # create grenade box
-                        item_box_grenade = ItemBox(constants.ITEM_BOX_NAME_GRENADE, 500, constants.BASE_GROUND - 100)
+                        item_box_grenade = ItemBox(constants.ITEM_BOX_NAME_GRENADE, x * constants.TILE_SIZE, y * constants.TILE_SIZE)
                         item_box_group.add(item_box_grenade)
                     elif tile == 19:
                         item_box_coin = ItemBox(constants.ITEM_BOX_NAME_COIN, x * constants.TILE_SIZE, y * constants.TILE_SIZE)
@@ -71,12 +72,18 @@ class Decoration(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.midtop = (x + constants.TILE_SIZE // 2, y + (constants.TILE_SIZE - self.image.get_height()))
         
+    def update(self, screen_scroll):
+        self.rect.x += screen_scroll
+                              
 class Water(pygame.sprite.Sprite): # Or any effective tile
     def __init__(self, img, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.midtop = (x + constants.TILE_SIZE // 2, y + (constants.TILE_SIZE - self.image.get_height()))
+    
+    def update(self, screen_scroll):
+        self.rect.x += screen_scroll
         
 # TODO handle dialouge before or after
 class Exit(pygame.sprite.Sprite): # Go to next level
@@ -85,3 +92,6 @@ class Exit(pygame.sprite.Sprite): # Go to next level
         self.image = img
         self.rect = self.image.get_rect()
         self.rect.midtop = (x + constants.TILE_SIZE // 2, y + (constants.TILE_SIZE - self.image.get_height()))
+        
+    def update(self, screen_scroll):
+        self.rect.x += screen_scroll
