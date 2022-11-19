@@ -21,6 +21,7 @@ PLAYER_SPEED:int = 5
 ENEMY_TNT_SPEED:int = 2
 PLAYER_TAKE_DAMAGE = 5 # TODO input argument instead because depend on level and boss?
 ENEMY_TAKE_DAMAGE = 20 # TODO input argument?
+ENEMY_VALUE_COIN:int = 20
 
 BULLET_RANGE:float = 0.75
 BULLET_SPEED:int = 10
@@ -47,3 +48,5 @@ ITEM_BOX_NAME_COIN:string = 'Coin'
 ITEM_BOX_VALUE_HEALTH:int = 25
 ITEM_BOX_VALUE_COIN:int = 100
 ITEM_BOX_VALUE_GRENADE:int = 2
+
+MAX_LEVELS:int = 3

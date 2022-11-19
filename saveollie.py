@@ -135,7 +135,7 @@ while run:
         player.draw(screen)
 
         for enemy in enemy_group:
-            enemy.ai(player, bullet_group, world, screen_scroll, bg_scroll, water_group)
+            enemy.ai(player, bullet_group, world, screen_scroll, bg_scroll, water_group, exit_group)
             enemy.update()
             enemy.draw(screen)
 
@@ -173,8 +173,23 @@ while run:
                 player.update_action(constants.ACTION_RUN)
             else:
                 player.update_action(constants.ACTION_IDLE)
-            screen_scroll = player.move(moving_left, moving_right, world, bg_scroll, water_group)
+            screen_scroll, level_complete = player.move(moving_left, moving_right, world, bg_scroll, water_group, exit_group)
             bg_scroll -= screen_scroll
+            # check if player has completed the level
+            if level_complete:
+                level += 1
+                bg_scroll = 0
+                world_data = reset_level()
+                if level <= constants.MAX_LEVELS:
+                    # load in level data and create world
+                    with open(f'levels/level{level}_data.csv', newline='') as csvfile:
+                        reader = csv.reader(csvfile, delimiter=',')
+                        for x, row in enumerate(reader):
+                            for y, tile in enumerate(row):
+                                world_data[x][y] = int(tile)
+                    world = World()
+                    player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group)
+
         else: #player not alive
             screen_scroll = 0
             if restart_button.draw(screen):

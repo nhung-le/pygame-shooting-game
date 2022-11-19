@@ -67,7 +67,7 @@ class Character(pygame.sprite.Sprite):
             # TODO ammo add condition and self.ammo > 0
             self.shoot_cooldown -= 1
 
-    def move(self, moving_left, moving_right, world, bg_scroll, water_group):
+    def move(self, moving_left, moving_right, world, bg_scroll, water_group, exit_group):
         #reset movement
         screen_scroll = 0
         dx = dy = 0
@@ -118,6 +118,11 @@ class Character(pygame.sprite.Sprite):
         if pygame.sprite.spritecollide(self, water_group, False):
             self.health = 0
         
+        # check for collision with exit
+        level_complete = False
+        if pygame.sprite.spritecollide(self, exit_group, False):
+            level_complete = True
+        
         # check if fallen off  the map
         if self.rect.bottom > constants.SCREEN_HEIGHT:
             self.health = 0
@@ -138,7 +143,7 @@ class Character(pygame.sprite.Sprite):
                 self.rect.x -= dx
                 screen_scroll = -dx
         
-        return screen_scroll
+        return screen_scroll, level_complete
 
     def shoot(self, bullet_group):
         if self.shoot_cooldown == 0:
@@ -146,7 +151,7 @@ class Character(pygame.sprite.Sprite):
             bullet = Bullet(self.rect.centerx + (constants.BULLET_RANGE * self.rect.size[0] * self.direction ), self.rect.centery, self.direction)
             bullet_group.add(bullet)
     
-    def ai(self, player, bullet_group, world, screen_scroll, bg_scroll, water_group): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
+    def ai(self, player, bullet_group, world, screen_scroll, bg_scroll, water_group, exit_group): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
         if self.alive and player.alive:
             if self.idling == False and random.randint(1, 200) == 1: # sometimes stopped
                 self.update_action(constants.ACTION_IDLE)
@@ -166,7 +171,7 @@ class Character(pygame.sprite.Sprite):
                     else:
                         ai_moving_right = False
                     ai_moving_left = not ai_moving_right
-                    self.move(ai_moving_left, ai_moving_right, world, bg_scroll, water_group)
+                    self.move(ai_moving_left, ai_moving_right, world, bg_scroll, water_group, exit_group)
                     self.update_action(constants.ACTION_RUN)
                     # TODO maybe upgrade to find and run to player
                     self.move_counter += 1
