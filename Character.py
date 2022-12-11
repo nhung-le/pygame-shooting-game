@@ -145,13 +145,14 @@ class Character(pygame.sprite.Sprite):
         
         return screen_scroll, level_complete
 
-    def shoot(self, bullet_group):
+    def shoot(self, bullet_group, shot_fx):
         if self.shoot_cooldown == 0:
             self.shoot_cooldown = constants.SHOOT_COOLDOWN
             bullet = Bullet(self.rect.centerx + (constants.BULLET_RANGE * self.rect.size[0] * self.direction ), self.rect.centery, self.direction)
             bullet_group.add(bullet)
+            shot_fx.play()
     
-    def ai(self, player, bullet_group, world, screen_scroll, bg_scroll, water_group, exit_group): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
+    def ai(self, player, bullet_group, world, screen_scroll, bg_scroll, water_group, exit_group, shot_fx): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
         if self.alive and player.alive:
             if self.idling == False and random.randint(1, 200) == 1: # sometimes stopped
                 self.update_action(constants.ACTION_IDLE)
@@ -163,7 +164,7 @@ class Character(pygame.sprite.Sprite):
                 # stop running and face the player
                 self.update_action(constants.ACTION_IDLE)
                 # shoot
-                self.shoot(bullet_group)
+                self.shoot(bullet_group, shot_fx)
             else:
                 if self.idling == False:
                     if self.direction == 1:
@@ -219,7 +220,7 @@ class Character(pygame.sprite.Sprite):
             self.health = 0
             self.speed = 0
             self.alive = False
-            self.update_action(3) # death TODO do we need to kill object for enemy type as well?
+            self.update_action(constants.ACTION_DEATH) # death TODO do we need to kill object for enemy type as well?
             
 class HealthBar():
     def __init__(self, x, y, health, max_health):

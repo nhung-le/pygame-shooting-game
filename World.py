@@ -15,7 +15,7 @@ class World():
             img = pygame.transform.scale(img, (constants.TILE_SIZE, constants.TILE_SIZE))
             self.img_list.append(img)
         
-    def process_data(self, data, enemy_group, item_box_group, water_group, decoration_group, exit_group):
+    def process_data(self, data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin):
         self.level_length = len(data[0])
         # iterate through each value in level file
         for y, row in enumerate(data):
@@ -39,6 +39,7 @@ class World():
                     elif tile == 15: #create player
                         player = Character(x * constants.TILE_SIZE, y * constants.TILE_SIZE, 0.65, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP, constants.GRENADE_NUMBER)
                         health_bar = HealthBar(10, 10, player.health, player.max_health)
+                        player.coin = saved_coin
                     elif tile == 16: #create enemy (TODO types)
                         enemy = Character(x * constants.TILE_SIZE, y * constants.TILE_SIZE, 0.65, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
                         # enemy2 = Character(300, 200, 0.65, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy

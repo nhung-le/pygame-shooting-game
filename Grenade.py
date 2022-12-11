@@ -16,7 +16,7 @@ class Grenade(pygame.sprite.Sprite):
         self.direction = direction
         self.explosion_group = explosion_group
         
-    def update(self, player, enemy_group, world, screen_scroll):
+    def update(self, player, enemy_group, world, screen_scroll, grenade_fx):
         self.vel_y += constants.GRAVITY
         dx = self.direction * self.speed
         dy = self.vel_y
@@ -46,6 +46,7 @@ class Grenade(pygame.sprite.Sprite):
         self.timer -= 1
         if self.timer <= 0:
             self.kill()
+            grenade_fx.play()
             explosion = Explosion(self.rect.x, self.rect.y, 1) # TODO constant scale?
             self.explosion_group.add(explosion)
             # do damage to anyone that is nearby even player (?)
