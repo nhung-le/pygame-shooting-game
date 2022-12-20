@@ -27,9 +27,8 @@ clock = pygame.time.Clock()
 moving_left = moving_right = shoot = grenade = grenade_thrown = False
 
 #define colours
-bg = pygame.image.load('images/background/0.png').convert_alpha()
-menu_center = Animation(0.8, 'images/menu')
-menu_effect = Animation(0.2, 'images/flask')
+menu_center = Animation(0.8, constants.DEFAULT_ANIMATION_SPEED, 'images/menu')
+menu_effect = Animation(0.2, 50, 'images/flask')
 menu_title = pygame.image.load('images/title.png').convert_alpha()
 
 #load music and sounds
@@ -66,13 +65,29 @@ saved_coin = 0
 # not using yet
 font = pygame.font.SysFont('Futura', 30)
 
+bg1 = pygame.image.load('images/background/0.png').convert_alpha()
+bg2 = pygame.image.load('images/background/1.png').convert_alpha()
+snowing = Animation(1, constants.DEFAULT_ANIMATION_SPEED, 'images/background/snow')
 # draw BG
 def draw_bg():
     screen.fill(constants.GREEN)
+    if level == 1:
+        bg = bg1
+    elif level == 2:
+        bg = bg2
+    else:
+        bg = bg1 # default 1 
+        
     rel_x = bg_scroll % bg.get_rect().width
     screen.blit(bg, (rel_x - bg.get_rect().width, 0))
+    if level == 2:
+        snowing.update_animation()
+        screen.blit(snowing.image, (rel_x - bg.get_rect().width, 0))
+        
     if rel_x < constants.SCREEN_WIDTH:
         screen.blit(bg, (rel_x, 0))
+        if level == 2:
+            screen.blit(snowing.image, (rel_x, 0))
 
 def draw_menu():
     # black screen first

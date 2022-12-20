@@ -2,8 +2,9 @@ import pygame
 import os
 
 class Animation(pygame.sprite.Sprite):
-    def __init__(self, scale, dir):
+    def __init__(self, scale, speed, dir):
         self.update_time = pygame.time.get_ticks() # next animation
+        self.speed = speed # animation speed
         self.animation_list = []
         self.frame_index = 0
         number_of_frames = len(os.listdir(f'{dir}'))
@@ -17,7 +18,7 @@ class Animation(pygame.sprite.Sprite):
         # update image depending on current frame
         self.image = self.animation_list[self.frame_index]
         # check if enough time has passed since the last update
-        if pygame.time.get_ticks() - self.update_time > 50:
+        if pygame.time.get_ticks() - self.update_time > self.speed:
             self.update_time = pygame.time.get_ticks()
             self.frame_index += 1
         # if animation run out then reset back to start

@@ -24,6 +24,7 @@ ENEMY_UDIN_HP:int = 80
 BOSS_HP:int = 9999
 PLAYER_SPEED:int = 5
 ENEMY_UDIN_SPEED:int = 2
+DEFAULT_ANIMATION_SPEED = 100
 PLAYER_TAKE_DAMAGE = 5 # TODO input argument instead because depend on level and boss?
 ENEMY_TAKE_DAMAGE = 20 # TODO input argument?
 ENEMY_VALUE_COIN:int = 20
