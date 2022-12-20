@@ -60,7 +60,7 @@ restart_img = pygame.image.load('images/buttons/reset.png').convert_alpha() # TO
 screen_scroll = 0
 bg_scroll = 0
 start_game = start_intro = False
-level = 1 # TODO use this to split BG map and tile pictures
+level = 1 # TODO use this to split BG map
 saved_coin = 0
 
 # not using yet
@@ -146,7 +146,7 @@ with open(f'levels/level{level}_data.csv', newline='') as csvfile:
     for x, row in enumerate(reader):
         for y, tile in enumerate(row):
              world_data[x][y] = int(tile)
-world = World()
+world = World(level)
 player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
 
 # TODO move to top later
@@ -260,7 +260,7 @@ while run:
                         for x, row in enumerate(reader):
                             for y, tile in enumerate(row):
                                 world_data[x][y] = int(tile)
-                    world = World()
+                    world = World(level)
                     player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
 
         else: #player not alive
@@ -277,7 +277,7 @@ while run:
                         for x, row in enumerate(reader):
                             for y, tile in enumerate(row):
                                 world_data[x][y] = int(tile)
-                    world = World()
+                    world = World(level)
                     player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
                 
 

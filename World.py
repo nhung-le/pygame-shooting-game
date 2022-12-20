@@ -4,14 +4,14 @@ from Character import Character, HealthBar
 from ItemBox import ItemBox
 
 class World():
-    def __init__(self):
+    def __init__(self, level):
         # TODO the same for enemy types ?
         self.obstacle_list = []
 
         # TODO move to outside so no need to load m ulti time same images
         self.img_list = []
         for x in range(constants.TILE_TYPES):
-            img = pygame.image.load(f'images/tiles/{x}.png') # TODO level different folder because different map?
+            img = pygame.image.load(f'images/tiles/{level}/{x}.png') # TODO level different folder because different map?
             img = pygame.transform.scale(img, (constants.TILE_SIZE, constants.TILE_SIZE))
             self.img_list.append(img)
         
@@ -30,19 +30,18 @@ class World():
                     # TODO CONSTANT TILE TYPES
                     if tile >= 0 and  tile <= 8:
                         self.obstacle_list.append(tile_data)
-                    elif tile >= 9 and  tile <= 10:
+                    elif tile >= 9 and  tile <= 12:
                         water = Water(img, x * constants.TILE_SIZE, y * constants.TILE_SIZE)
                         water_group.add(water)
-                    elif tile >= 11 and tile <= 11:
+                    elif tile >= 13 and  tile <= 14:
                         decoration = Decoration(img, x * constants.TILE_SIZE, y * constants.TILE_SIZE)
                         decoration_group.add(decoration)
                     elif tile == 15: #create player
-                        player = Character(x * constants.TILE_SIZE, y * constants.TILE_SIZE, 0.65, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP, constants.GRENADE_NUMBER)
+                        player = Character(x * constants.TILE_SIZE, y * constants.TILE_SIZE, 1, 'player', 'moona', constants.PLAYER_SPEED, constants.PLAYER_HP, constants.GRENADE_NUMBER)
                         health_bar = HealthBar(10, 10, player.health, player.max_health)
                         player.coin = saved_coin
-                    elif tile == 16: #create enemy (TODO types)
-                        enemy = Character(x * constants.TILE_SIZE, y * constants.TILE_SIZE, 0.65, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
-                        # enemy2 = Character(300, 200, 0.65, 'enemy', 'tnt', constants.ENEMY_TNT_SPEED, constants.ENEMY_TNT_HP, 0) # no grenade for enemy
+                    elif tile == 16: #create enemy (TODO types upgrade later)
+                        enemy = Character(x * constants.TILE_SIZE, y * constants.TILE_SIZE, 1, 'enemy', 'udin', constants.ENEMY_UDIN_SPEED, constants.ENEMY_UDIN_HP, 0) # no grenade for enemy
                         # enemy_group.add(enemy2)
                         enemy_group.add(enemy)
                     elif tile == 17: # create item box

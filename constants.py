@@ -20,10 +20,10 @@ ANIMATION_COOLDOWN:int = 100
 #TEMPORARY_AMMO:int = 20
 
 PLAYER_HP:int = 100
-ENEMY_TNT_HP:int = 80
+ENEMY_UDIN_HP:int = 80
 BOSS_HP:int = 9999
 PLAYER_SPEED:int = 5
-ENEMY_TNT_SPEED:int = 2
+ENEMY_UDIN_SPEED:int = 2
 PLAYER_TAKE_DAMAGE = 5 # TODO input argument instead because depend on level and boss?
 ENEMY_TAKE_DAMAGE = 20 # TODO input argument?
 ENEMY_VALUE_COIN:int = 20
@@ -45,7 +45,7 @@ BASE_GROUND:int = 300
 ROWS:int = 16
 COLS:int = 150
 TILE_SIZE:int = SCREEN_HEIGHT // ROWS
-TILE_TYPES:int = 21 # TODO BLOCK types update later
+TILE_TYPES:int = 21
 
 ITEM_BOX_NAME_HEALTH:string = 'Health'
 ITEM_BOX_NAME_GRENADE:string = 'Grenade'

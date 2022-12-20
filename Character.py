@@ -154,11 +154,15 @@ class Character(pygame.sprite.Sprite):
     
     def ai(self, player, bullet_group, world, screen_scroll, bg_scroll, water_group, exit_group, shot_fx): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
         if self.alive and player.alive:
+            if self.rect.colliderect(player.rect): # player die if touch enemy
+                player.health = 0
+
             if self.idling == False and random.randint(1, 200) == 1: # sometimes stopped
                 self.update_action(constants.ACTION_IDLE)
                 self.idling = True
                 self.idling_counter = 50
-            # check if the  ai in near the player
+
+            # check if the ai in near the player
             if self.vision.colliderect(player.rect):
                 # TODO different depend on type of enemy, might not shoot but explode
                 # stop running and face the player
