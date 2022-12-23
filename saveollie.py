@@ -37,7 +37,7 @@ bgm_channel = pygame.mixer.Channel(1)
 
 menu_fx = mixer.Sound('audio/menu.wav')
 menu_fx.set_volume(0.05)
-bgm_fx = mixer.Sound('audio/music2.mp3') # TODO update later
+bgm_fx = mixer.Sound('audio/bgm.wav')
 bgm_fx.set_volume(0.05)
 
 menu_channel.play(menu_fx, loops=-1, fade_ms=5000)
@@ -50,6 +50,8 @@ shot_fx = mixer.Sound('audio/shot.wav')
 shot_fx.set_volume(0.5)
 grenade_fx = mixer.Sound('audio/explosion.ogg')
 grenade_fx.set_volume(0.5)
+
+# TODO SFX for take damage, death
 
 # button images
 start_img = pygame.image.load('images/buttons/start.png').convert_alpha()
@@ -163,10 +165,6 @@ with open(f'levels/level{level}_data.csv', newline='') as csvfile:
              world_data[x][y] = int(tile)
 world = World(level)
 player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
-
-# TODO move to top later
-# DS-Digital font
-font = pygame.font.Font('freesansbold.ttf', 20)
 
 enemy_len = count_enemies(enemy_group)
 
