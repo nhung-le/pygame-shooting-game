@@ -50,12 +50,12 @@ class Grenade(pygame.sprite.Sprite):
             explosion = Explosion(self.rect.x, self.rect.y, 1) # TODO constant scale?
             self.explosion_group.add(explosion)
             # do damage to anyone that is nearby even player (?)
-            # NO abs for y so it won't cause damage below
+            # very little range in cernter y because no damge below and above
             if abs(self.rect.centerx - player.rect.centerx) < constants.TILE_SIZE * 2 and \
-                self.rect.centery - player.rect.centery < constants.TILE_SIZE * 2:
-                player.health -= 30 # TODO need this? constant this?
+                abs(self.rect.centery - player.rect.centery) < constants.TILE_SIZE:
+                player.health -= constants.GRENADE_ON_PLAYER
             for enemy in enemy_group:
                 if abs(self.rect.centerx - enemy.rect.centerx) < constants.TILE_SIZE * 2 and \
-                    self.rect.centery - enemy.rect.centery < constants.TILE_SIZE * 2:
-                    enemy.health -= 50 # TODO constant this?
+                    abs(self.rect.centery - enemy.rect.centery) < constants.TILE_SIZE:
+                    enemy.health -= constants.GRENADE_ON_ENEMY
         

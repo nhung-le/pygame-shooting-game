@@ -148,7 +148,7 @@ class Character(pygame.sprite.Sprite):
     def shoot(self, bullet_group, shot_fx):
         if self.shoot_cooldown == 0:
             self.shoot_cooldown = constants.SHOOT_COOLDOWN
-            bullet = Bullet(self.rect.centerx + (constants.BULLET_RANGE * self.rect.size[0] * self.direction ), self.rect.centery, self.direction)
+            bullet = Bullet(self.rect.centerx + (constants.BULLET_RANGE * self.rect.size[0] * self.direction ), self.rect.centery, self.direction, self.character_type)
             bullet_group.add(bullet)
             shot_fx.play()
     
@@ -183,7 +183,8 @@ class Character(pygame.sprite.Sprite):
                     # update ai vision as the enemy moves
                     # TODO should still have when idle depend on the type of enemy
                     self.vision.center = (self.rect.centerx + 75 * self.direction, self.rect.centery) # TODO constant
-                    # draw vision: pygame.draw.rect(screen, constants.RED, self.vision)
+                    # draw vision: 
+                    # pygame.draw.rect(screen, constants.RED, self.vision)
                     
                     if self.move_counter > constants.TILE_SIZE:
                         self.direction *= -1

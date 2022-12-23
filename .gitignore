@@ -1,2 +1,5 @@
 /__pycache__/
 /files_ref/
+/backup/
+/build/
+/dist/
