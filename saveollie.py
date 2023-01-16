@@ -57,12 +57,14 @@ grenade_fx.set_volume(0.5)
 start_img = pygame.image.load('images/buttons/start.png').convert_alpha()
 exit_img = pygame.image.load('images/buttons/exit.png').convert_alpha()
 restart_img = pygame.image.load('images/buttons/reset.png').convert_alpha() # TODO UPDATE BUTTON
+return_image = pygame.image.load('images/buttons/return.png').convert_alpha() # TODO UPDATE BUTTON
 
 screen_scroll = 0
 bg_scroll = 0
 start_game = start_intro = False
-level = 1 # TODO use this to split BG map
+level = 1
 saved_coin = 0
+final_coin = 0
 
 # not using yet
 font = pygame.font.SysFont('Futura', 30)
@@ -132,6 +134,15 @@ def reset_level():
         data.append(r)
     return data
 
+def load_world(level):
+    # load in level data and create world
+    with open(f'levels/level{level}_data.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        for x, row in enumerate(reader):
+            for y, tile in enumerate(row):
+                world_data[x][y] = int(tile)
+    return World(level)
+    
 # create screen fades
 # TODO update PINK to screen transition you want
 death_fade = ScreenFade(constants.FADE_GO_DOWN, constants.PINK, 4)
@@ -140,7 +151,8 @@ intro_fade = ScreenFade(constants.FADE_ALL, constants.BLACK, 4)
 # create buttons
 start_button = Button(constants.SCREEN_WIDTH // 2 - 100, constants.SCREEN_HEIGHT // 2 + 100, start_img, 0.3)
 exit_button = Button(constants.SCREEN_WIDTH // 2 - 80, constants.SCREEN_HEIGHT // 2 + 150, exit_img, 0.3)
-restart_button = Button(constants.SCREEN_WIDTH // 2 - 100, constants.SCREEN_HEIGHT // 2 - 50, restart_img, 0.3)
+restart_button = Button(constants.SCREEN_WIDTH // 2 - 80, constants.SCREEN_HEIGHT // 2 - 50, restart_img, 0.3)
+back_button = Button(constants.SCREEN_WIDTH // 2 - 50, constants.SCREEN_HEIGHT // 2 - 50, return_image, 0.3)
 
 # create sprite groups
 enemy_group = pygame.sprite.Group()
@@ -157,13 +169,8 @@ world_data = []
 for row in range(constants.ROWS):
     r = [-1] * constants.COLS
     world_data.append(r)
-# load in level data and create world
-with open(f'levels/level{level}_data.csv', newline='') as csvfile:
-    reader = csv.reader(csvfile, delimiter=',')
-    for x, row in enumerate(reader):
-        for y, tile in enumerate(row):
-             world_data[x][y] = int(tile)
-world = World(level)
+
+world = load_world(level)
 player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
 
 enemy_len = count_enemies(enemy_group)
@@ -181,6 +188,10 @@ while run:
         menu_channel.unpause()
         # add button
         if start_button.draw(screen):
+            final_coin = player.coin
+            print(final_coin)
+            saved_coin = 0
+            player.coin = 0
             start_game = True
             start_intro = True
         if exit_button.draw(screen):
@@ -261,21 +272,29 @@ while run:
             bg_scroll -= screen_scroll
             # check if player has completed the level
             if level_complete:
-                start_intro = True
-                level += 1
-                saved_coin += player.coin
-                bg_scroll = 0
-                world_data = reset_level()
-                if level <= constants.MAX_LEVELS:
+                if level < constants.MAX_LEVELS:
+                    start_intro = True
+                    level += 1
+                    saved_coin += player.coin
+                    bg_scroll = 0
+                    world_data = reset_level()
                     # load in level data and create world
-                    with open(f'levels/level{level}_data.csv', newline='') as csvfile:
-                        reader = csv.reader(csvfile, delimiter=',')
-                        for x, row in enumerate(reader):
-                            for y, tile in enumerate(row):
-                                world_data[x][y] = int(tile)
-                    world = World(level)
+                    world = load_world(level)
                     player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
+                else: 
+                    screen_scroll = 0
+                    bg_scroll = 0
+                    if death_fade.fade(screen):
+                        if back_button.draw(screen): # TODO button return menu instead
+                            death_fade.fade_counter = 0 # reset back to zero
+                            start_intro = False
+                            start_game = False
+                            world_data = reset_level()
+                            level = 1 # restart to first level
+                            world = load_world(level)
+                            player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
 
+                
         else: #player not alive
             screen_scroll = 0
             if death_fade.fade(screen):
@@ -285,12 +304,7 @@ while run:
                     bg_scroll = 0
                     world_data = reset_level()
                     # load in level data and create world
-                    with open(f'levels/level{level}_data.csv', newline='') as csvfile:
-                        reader = csv.reader(csvfile, delimiter=',')
-                        for x, row in enumerate(reader):
-                            for y, tile in enumerate(row):
-                                world_data[x][y] = int(tile)
-                    world = World(level)
+                    world = load_world(level)
                     player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
                 
 
