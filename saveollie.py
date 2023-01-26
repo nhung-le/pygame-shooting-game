@@ -50,14 +50,16 @@ shot_fx = mixer.Sound('audio/shot.wav')
 shot_fx.set_volume(0.5)
 grenade_fx = mixer.Sound('audio/explosion.ogg')
 grenade_fx.set_volume(0.5)
-
-# TODO SFX for take damage, death
+hit_fx = mixer.Sound('audio/take-damaged.wav')
+hit_fx.set_volume(0.5)
+dead_fx = mixer.Sound('audio/dead.wav')
+dead_fx.set_volume(0.5)
 
 # button images
 start_img = pygame.image.load('images/buttons/start.png').convert_alpha()
 exit_img = pygame.image.load('images/buttons/exit.png').convert_alpha()
-restart_img = pygame.image.load('images/buttons/reset.png').convert_alpha() # TODO UPDATE BUTTON
-return_image = pygame.image.load('images/buttons/return.png').convert_alpha() # TODO UPDATE BUTTON
+restart_img = pygame.image.load('images/buttons/reset.png').convert_alpha()
+return_image = pygame.image.load('images/buttons/return.png').convert_alpha()
 
 screen_scroll = 0
 bg_scroll = 0
@@ -221,13 +223,13 @@ while run:
         player.draw(screen)
 
         for enemy in enemy_group:
-            enemy.ai(player, bullet_group, world, screen_scroll, bg_scroll, water_group, exit_group, shot_fx)
+            enemy.ai(player, bullet_group, world, screen_scroll, bg_scroll, water_group, exit_group, shot_fx, dead_fx)
             enemy.update()
             enemy.draw(screen)
 
         # update and draw groups
         bullet_group.draw(screen)
-        bullet_group.update(player, enemy_group, bullet_group, world, screen_scroll)
+        bullet_group.update(player, enemy_group, bullet_group, world, screen_scroll, hit_fx)
         grenade_group.draw(screen)
         grenade_group.update(player, enemy_group, world, screen_scroll, grenade_fx)
         explosion_group.draw(screen)
@@ -268,7 +270,7 @@ while run:
                 player.update_action(constants.ACTION_RUN)
             else:
                 player.update_action(constants.ACTION_IDLE)
-            screen_scroll, level_complete = player.move(moving_left, moving_right, world, bg_scroll, water_group, exit_group)
+            screen_scroll, level_complete = player.move(moving_left, moving_right, world, bg_scroll, water_group, exit_group, dead_fx)
             bg_scroll -= screen_scroll
             # check if player has completed the level
             if level_complete:
@@ -281,11 +283,11 @@ while run:
                     # load in level data and create world
                     world = load_world(level)
                     player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
-                else: 
+                else: # PLAYER FINISH THE GAME (TODO using death_fade temporary )
                     screen_scroll = 0
                     bg_scroll = 0
                     if death_fade.fade(screen):
-                        if back_button.draw(screen): # TODO button return menu instead
+                        if back_button.draw(screen):
                             death_fade.fade_counter = 0 # reset back to zero
                             start_intro = False
                             start_game = False
