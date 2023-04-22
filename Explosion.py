@@ -14,7 +14,7 @@ class Explosion(pygame.sprite.Sprite):
         self.frame_index = 0
         self.image = self.images[self.frame_index]
         self.rect = self.image.get_rect()
-        self.rect.center = (x, y-50)
+        self.rect.center = (x, y)
         self.counter = 0
     
     def update(self, screen_scroll):

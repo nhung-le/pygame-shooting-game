@@ -47,10 +47,10 @@ class Grenade(pygame.sprite.Sprite):
         if self.timer <= 0:
             self.kill()
             grenade_fx.play()
-            explosion = Explosion(self.rect.x, self.rect.y, 1) # TODO constant scale?
+            explosion = Explosion(self.rect.x, self.rect.y, 1)
             self.explosion_group.add(explosion)
             # do damage to anyone that is nearby even player (?)
-            # very little range in cernter y because no damge below and above
+            # very little range in center y because no damge below and above
             if abs(self.rect.centerx - player.rect.centerx) < constants.TILE_SIZE * 2 and \
                 abs(self.rect.centery - player.rect.centery) < constants.TILE_SIZE:
                 player.health -= constants.GRENADE_ON_PLAYER
