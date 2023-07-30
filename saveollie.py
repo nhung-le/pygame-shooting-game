@@ -100,7 +100,7 @@ def draw_menu():
     screen.blit(menu_effect.image, (menu_effect.image.get_rect().width * 6, menu_effect.image.get_rect().height * 5))
     screen.blit(menu_title, (50, constants.SCREEN_HEIGHT // 2 - 100))
 
-def draw_manual(): # todo
+def draw_manual():
     screen.fill(constants.BLACK)
     manual.update_animation()
     screen.blit(manual.image, (0, 0))

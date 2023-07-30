@@ -7,13 +7,13 @@ class Button():
     def __init__(self, text, w, h, pos):
         self.top_rect = pygame.Rect(pos, (w,h))
         self.top_color = constants.BLACK
-        font = pygame.font.Font('fonts/Minecraft.ttf', 30) # TODO font not working
+        font = pygame.font.Font('fonts/Minecraft.ttf', 30)
 
         self.text_surf = font.render(text, True, constants.WHITE)
         self.text_rect = self.text_surf.get_rect(center = self.top_rect.center)
         
         self.clicked = False
-        self.last = pygame.time.get_ticks() # delay before went to game
+        self.last = pygame.time.get_ticks() # delay before go to game
         self.click_fx = mixer.Sound('audio/button-pressed.wav')
         self.click_fx.set_volume(0.5)
 
@@ -30,8 +30,6 @@ class Button():
         #check mouseover and clicked conditions
         if self.top_rect.collidepoint(pos):
             self.top_color = constants.BLUE
-            # TODO update effect button and click sound
-            #pygame.draw.rect(surface, constants.RED, self.rect, 1, 1)
             if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
                 self.click_fx.play()
                 now = pygame.time.get_ticks()
