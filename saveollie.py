@@ -38,7 +38,7 @@ bgm_channel = pygame.mixer.Channel(1)
 menu_fx = mixer.Sound('audio/menu.wav')
 menu_fx.set_volume(0.05)
 bgm_fx = mixer.Sound('audio/bgm.wav')
-bgm_fx.set_volume(0.05)
+bgm_fx.set_volume(0.8)
 
 menu_channel.play(menu_fx, loops=-1, fade_ms=5000)
 bgm_channel.play(bgm_fx, loops=-1, fade_ms=5000)
@@ -208,7 +208,7 @@ while run:
         world.draw(screen, screen_scroll)
         # show user's stats
         health_bar.draw(screen, player.health)
-        text = font.render(str(player.coin), True, constants.WHITE)
+        text = font.render(str(player.coin), True, constants.WHITE, constants.BLACK)
         textRect = text.get_rect()
         textRect.center = (60, 110)
 
@@ -320,11 +320,11 @@ while run:
                 moving_left = True
             if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 moving_right = True
-            if event.key == pygame.K_RETURN: # TODO maybe should always let it shoot?
+            if event.key == pygame.K_SPACE:
                 shoot = True
             if event.key == pygame.K_q:
                 grenade = True
-            if (event.key == pygame.K_w or event.key == pygame.K_UP or event.key == pygame.K_SPACE) and player.alive:
+            if (event.key == pygame.K_w or event.key == pygame.K_UP) and player.alive:
                 player.jump = True
                 jump_fx.play()
             if event.key == pygame.K_ESCAPE:
@@ -336,7 +336,7 @@ while run:
                 moving_left = False
             if event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                 moving_right = False
-            if event.key == pygame.K_RETURN:
+            if event.key == pygame.K_SPACE:
                 shoot = False
             if event.key == pygame.K_q:
                 grenade = False
