@@ -25,7 +25,7 @@ BOSS_HP:int = 9999
 PLAYER_SPEED:int = 5
 ENEMY_UDIN_SPEED:int = 2
 DEFAULT_ANIMATION_SPEED = 100
-PLAYER_TAKE_DAMAGE:int = 5 # TODO input argument instead because depend on level and boss?
+PLAYER_TAKE_DAMAGE:int = 10 # TODO input argument instead because depend on level and boss?
 ENEMY_TAKE_DAMAGE:int = 20
 GRENADE_ON_ENEMY:int = 100
 GRENADE_ON_PLAYER:int = 20
@@ -46,7 +46,7 @@ SCREEN_WIDTH:int = 800
 SCREEN_HEIGHT:int = int(SCREEN_WIDTH * 0.8)
 BASE_GROUND:int = 300
 ROWS:int = 16
-COLS:int = 150
+COLS:int = 420
 TILE_SIZE:int = SCREEN_HEIGHT // ROWS
 TILE_TYPES:int = 21
 

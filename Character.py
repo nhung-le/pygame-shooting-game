@@ -170,11 +170,13 @@ class Character(pygame.sprite.Sprite):
                 self.idling_counter = 50
 
             # check if the ai in near the player
+            #TODO vision lava?
             if self.vision.colliderect(player.rect):
                 # TODO different depend on type of enemy, might not shoot but explode
                 # stop running and face the player
                 self.update_action(constants.ACTION_IDLE)
                 # shoot
+                # TODO fixbug player change the direction then have to change direction as well
                 self.shoot(bullet_group, shot_fx)
             else:
                 if self.idling == False:
@@ -192,7 +194,6 @@ class Character(pygame.sprite.Sprite):
                     self.vision.center = (self.rect.centerx + 75 * self.direction, self.rect.centery) # TODO constant
                     # draw vision: 
                     # pygame.draw.rect(screen, constants.RED, self.vision)
-                    
                     if self.move_counter > constants.TILE_SIZE:
                         self.direction *= -1
                         self.move_counter *= -1

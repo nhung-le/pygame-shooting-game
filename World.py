@@ -41,7 +41,7 @@ class World():
                         health_bar = HealthBar(10, 10, player.health, player.max_health)
                         player.coin = saved_coin
                     elif tile == 16: #create enemy (TODO types upgrade later)
-                        enemy = Character(x * constants.TILE_SIZE, y * constants.TILE_SIZE, 1, 'enemy', 'udin', constants.ENEMY_UDIN_SPEED, constants.ENEMY_UDIN_HP, 0) # no grenade for enemy
+                        enemy = Character(x * constants.TILE_SIZE, y * constants.TILE_SIZE, 0.8, 'enemy', 'udin', constants.ENEMY_UDIN_SPEED, constants.ENEMY_UDIN_HP, 0) # no grenade for enemy
                         # enemy_group.add(enemy2)
                         enemy_group.add(enemy)
                     elif tile == 17: # create item box
