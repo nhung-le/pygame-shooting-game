@@ -30,6 +30,7 @@ moving_left = moving_right = shoot = grenade = grenade_thrown = False
 menu_center = Animation(0.8, constants.DEFAULT_ANIMATION_SPEED, 'images/menu')
 menu_effect = Animation(0.2, 50, 'images/flask')
 menu_title = pygame.image.load('images/title.png').convert_alpha()
+manual = Animation(1, 1000, 'images/manual')
 
 #load music and sounds
 menu_channel = pygame.mixer.Channel(0)
@@ -55,15 +56,9 @@ hit_fx.set_volume(0.5)
 dead_fx = mixer.Sound('audio/dead.wav')
 dead_fx.set_volume(0.5)
 
-# button images
-start_img = pygame.image.load('images/buttons/start.png').convert_alpha()
-exit_img = pygame.image.load('images/buttons/exit.png').convert_alpha()
-restart_img = pygame.image.load('images/buttons/reset.png').convert_alpha()
-return_image = pygame.image.load('images/buttons/return.png').convert_alpha()
-
 screen_scroll = 0
 bg_scroll = 0
-start_game = start_intro = False
+start_game = start_intro = in_menu = False
 level = 1
 saved_coin = 0
 final_coin = 0
@@ -104,6 +99,11 @@ def draw_menu():
     screen.blit(menu_effect.image, (menu_effect.image.get_rect().width, menu_effect.image.get_rect().height * 4))
     screen.blit(menu_effect.image, (menu_effect.image.get_rect().width * 6, menu_effect.image.get_rect().height * 5))
     screen.blit(menu_title, (50, constants.SCREEN_HEIGHT // 2 - 100))
+
+def draw_manual(): # todo
+    screen.fill(constants.BLACK)
+    manual.update_animation()
+    screen.blit(manual.image, (0, 0))
 
 # draw text
 def draw_text(text, font, text_color, x, y):
@@ -151,10 +151,12 @@ death_fade = ScreenFade(constants.FADE_GO_DOWN, constants.PINK, 4)
 intro_fade = ScreenFade(constants.FADE_ALL, constants.BLACK, 4)
 
 # create buttons
-start_button = Button(constants.SCREEN_WIDTH // 2 - 100, constants.SCREEN_HEIGHT // 2 + 100, start_img, 0.3)
-exit_button = Button(constants.SCREEN_WIDTH // 2 - 80, constants.SCREEN_HEIGHT // 2 + 150, exit_img, 0.3)
-restart_button = Button(constants.SCREEN_WIDTH // 2 - 80, constants.SCREEN_HEIGHT // 2 - 50, restart_img, 0.3)
-back_button = Button(constants.SCREEN_WIDTH // 2 - 50, constants.SCREEN_HEIGHT // 2 - 50, return_image, 0.3)
+start_button = Button('Start', 200, 40, (constants.SCREEN_WIDTH // 2 - 100, constants.SCREEN_HEIGHT // 2 + 100))
+exit_button = Button('Exit', 200, 40, (constants.SCREEN_WIDTH // 2 - 100, constants.SCREEN_HEIGHT // 2 + 150))
+manual_button = Button('Manual', 200, 40, (constants.SCREEN_WIDTH // 2 - 100, constants.SCREEN_HEIGHT // 2 + 200)) 
+restart_button = Button('Reset', 200, 40, (constants.SCREEN_WIDTH // 2 - 100, constants.SCREEN_HEIGHT // 2 - 50))
+back_button = Button('Return', 200, 40, (constants.SCREEN_WIDTH // 2 - 50, constants.SCREEN_HEIGHT // 2 - 50))
+return_to_menu_button = Button('return', 100, 40, (constants.SCREEN_WIDTH - 100, constants.SCREEN_HEIGHT - 50))
 
 # create sprite groups
 enemy_group = pygame.sprite.Group()
@@ -182,22 +184,27 @@ while run:
     clock.tick(constants.FPS)
     
     if start_game == False:
-        # draw menu
-        # black screen first
-        # screen.fill(constants.BLACK)
-        draw_menu()
         bgm_channel.pause()
         menu_channel.unpause()
-        # add button
-        if start_button.draw(screen):
-            final_coin = player.coin
-            print(final_coin)
-            saved_coin = 0
-            player.coin = 0
-            start_game = True
-            start_intro = True
-        if exit_button.draw(screen):
-            run = False
+        if in_menu == False:
+            draw_menu()
+            # add button
+            if start_button.draw(screen):
+                final_coin = player.coin
+                print(final_coin)
+                saved_coin = 0
+                player.coin = 0
+                start_game = True
+                start_intro = True
+            if manual_button.draw(screen):
+                in_menu = True
+            if exit_button.draw(screen):
+                run = False
+        else:
+            draw_manual()
+            if return_to_menu_button.draw(screen):
+                in_menu = False
+
     else:            
         # stop menu music
         menu_channel.pause()
@@ -208,7 +215,7 @@ while run:
         world.draw(screen, screen_scroll)
         # show user's stats
         health_bar.draw(screen, player.health)
-        text = font.render(str(player.coin), True, constants.WHITE, constants.BLACK)
+        text = font.render(str(player.coin), True, constants.WHITE, constants.BLUE)
         textRect = text.get_rect()
         textRect.center = (60, 110)
 

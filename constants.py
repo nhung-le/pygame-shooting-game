@@ -5,6 +5,7 @@ GREEN = (0, 255, 0)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 PINK = (235, 64, 54)
+BLUE = (0, 60, 255)
 
 FADE_ALL:int = 1
 FADE_GO_DOWN:int = 2
