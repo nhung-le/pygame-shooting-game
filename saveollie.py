@@ -63,8 +63,8 @@ level = 1
 saved_coin = 0
 final_coin = 0
 
-# not using yet
-font = pygame.font.SysFont('Futura', 30)
+# general font
+font = pygame.font.SysFont('Serif', 30)
 
 bg1 = pygame.image.load('images/background/0.png').convert_alpha()
 bg2 = pygame.image.load('images/background/1.png').convert_alpha()
@@ -113,7 +113,7 @@ def draw_text(text, font, text_color, x, y):
 def count_enemies(enemy_group):
     count = 0
     for enemy in enemy_group:
-        if enemy.alive == True:
+        if enemy.damage_to_death == False:
             count += 1
     return count
 
@@ -149,6 +149,8 @@ def load_world(level):
 # TODO update PINK to screen transition you want
 death_fade = ScreenFade(constants.FADE_GO_DOWN, constants.PINK, 4)
 intro_fade = ScreenFade(constants.FADE_ALL, constants.BLACK, 4)
+credit_fade = ScreenFade(constants.FADE_GO_DOWN, constants.BLACK, 4)
+
 
 # create buttons
 start_button = Button('Start', 200, 40, (constants.SCREEN_WIDTH // 2 - 100, constants.SCREEN_HEIGHT // 2 + 100))
@@ -191,7 +193,6 @@ while run:
             # add button
             if start_button.draw(screen):
                 final_coin = player.coin
-                print(final_coin)
                 saved_coin = 0
                 player.coin = 0
                 start_game = True
@@ -290,12 +291,22 @@ while run:
                     # load in level data and create world
                     world = load_world(level)
                     player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
-                else: # PLAYER FINISH THE GAME (TODO using death_fade temporary )
+                else: # PLAYER FINISH THE GAME
+                    # TODO writing record
+                    # f = open("r3c0rd.txt", "a")
+                    # f.write(str(player.coin))
+                    # f.close()
                     screen_scroll = 0
                     bg_scroll = 0
-                    if death_fade.fade(screen):
-                        if back_button.draw(screen):
-                            death_fade.fade_counter = 0 # reset back to zero
+                    if credit_fade.fade(screen):
+                        draw_text("illustration: Tetsulot", font, constants.WHITE, 200, 200)
+                        draw_text("programming: saury", font, constants.WHITE, 200, 230)
+                        draw_text("BGM: hanesounds", font, constants.WHITE, 200, 260)
+                        draw_text("designer: Tetsulot & saury", font, constants.WHITE, 200, 290)
+                        draw_text("Thank you for playing!", font, constants.WHITE, 200, 340)
+                        draw_text("Demo ended, next part is coming soon!", font, constants.WHITE, 200, 370)
+                        if return_to_menu_button.draw(screen):
+                            credit_fade.fade_counter = 0 # reset back to zero
                             start_intro = False
                             start_game = False
                             world_data = reset_level()
