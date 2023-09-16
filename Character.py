@@ -24,6 +24,8 @@ class Character(pygame.sprite.Sprite):
         self.vel_y = 0
         self.flip = self.jump = False
         self.in_air = True
+        self.damage_to_death = False
+        self.damage_by_bullet = False
 
         self.animation_list = []
         self.frame_index = 0
@@ -57,7 +59,6 @@ class Character(pygame.sprite.Sprite):
         screen.blit(pygame.transform.flip(self.avatar, self.flip, False), self.rect)
         # TODO test rect
         # pygame.draw.rect(screen, BLACK, self.rect, 1)
-
     
     def update(self):
         self.update_animation()
@@ -233,6 +234,8 @@ class Character(pygame.sprite.Sprite):
             self.health = 0
             self.speed = 0
             self.alive = False
+            if (self.damage_by_bullet == True):
+                self.damage_to_death = True
             self.update_action(constants.ACTION_DEATH) # death TODO do we need to kill object for enemy type as well?
             
 class HealthBar():

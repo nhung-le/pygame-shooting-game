@@ -58,4 +58,5 @@ class Grenade(pygame.sprite.Sprite):
                 if abs(self.rect.centerx - enemy.rect.centerx) < constants.TILE_SIZE * 2 and \
                     abs(self.rect.centery - enemy.rect.centery) < constants.TILE_SIZE:
                     enemy.health -= constants.GRENADE_ON_ENEMY
+                    enemy.damage_to_death = True
         

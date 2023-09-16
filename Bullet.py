@@ -30,3 +30,4 @@ class Bullet(pygame.sprite.Sprite):
                     enemy.health -= constants.ENEMY_TAKE_DAMAGE
                     hit_fx.play()
                     self.kill()
+                    enemy.damage_by_bullet = True
