@@ -146,7 +146,6 @@ def load_world(level):
     return World(level)
     
 # create screen fades
-# TODO update PINK to screen transition you want
 death_fade = ScreenFade(constants.FADE_GO_DOWN, constants.PINK, 4)
 intro_fade = ScreenFade(constants.FADE_ALL, constants.BLACK, 4)
 credit_fade = ScreenFade(constants.FADE_GO_DOWN, constants.BLACK, 4)
@@ -292,10 +291,6 @@ while run:
                     world = load_world(level)
                     player, health_bar = world.process_data(world_data, enemy_group, item_box_group, water_group, decoration_group, exit_group, saved_coin)
                 else: # PLAYER FINISH THE GAME
-                    # TODO writing record
-                    # f = open("r3c0rd.txt", "a")
-                    # f.write(str(player.coin))
-                    # f.close()
                     screen_scroll = 0
                     bg_scroll = 0
                     if credit_fade.fade(screen):
