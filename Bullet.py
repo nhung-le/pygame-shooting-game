@@ -24,6 +24,7 @@ class Bullet(pygame.sprite.Sprite):
             if player.alive:
                 player.health -= constants.PLAYER_TAKE_DAMAGE
                 self.kill()
+                player.last_shot_time = pygame.time.get_ticks()
         for enemy in enemy_group:
             if pygame.sprite.spritecollide(enemy, group, False):
                 if enemy.alive:

@@ -16,6 +16,7 @@ class Character(pygame.sprite.Sprite):
         # self.ammo = constants.TEMPORARY_AMMO
         # self.start_ammo = constants.TEMPORARY_AMMO
         self.shoot_cooldown = 0
+        self.retreat_time = constants.RETREAT_TIME
         self.grenades = grenades
         self.coin = 0
         self.health = health
@@ -36,6 +37,7 @@ class Character(pygame.sprite.Sprite):
         self.move_counter = self.idling_counter = 0
         self.vision = pygame.Rect(0, 0, 150, 20) # 150 = how far they can look TODO constant
         self.idling = False
+        self.last_shot_time = False
 
         #load all images for players
         animation_types = ['idle', 'run', 'jump', 'death']
@@ -157,6 +159,8 @@ class Character(pygame.sprite.Sprite):
             bullet = Bullet(self.rect.centerx + (constants.BULLET_RANGE * self.rect.size[0] * self.direction ), self.rect.centery, self.direction, self.character_type)
             bullet_group.add(bullet)
             shot_fx.play()
+            if self.retreat_time > 0:
+                self.retreat_time -= 1
     
     def ai(self, player, bullet_group, world, screen_scroll, bg_scroll, water_group, exit_group, shot_fx, dead_fx): # TODO SHOULD BE DIFFERENT DEPENDS ON ENEMY, LIKE SOME WILL ALWAYS BE IDLING
         if self.alive and player.alive:
@@ -173,13 +177,35 @@ class Character(pygame.sprite.Sprite):
             # check if the ai in near the player
             #TODO vision lava?
             if self.vision.colliderect(player.rect):
-                # TODO different depend on type of enemy, might not shoot but explode
-                # stop running and face the player
-                self.update_action(constants.ACTION_IDLE)
-                # shoot
-                # TODO fixbug player change the direction then have to change direction as well
-                self.shoot(bullet_group, shot_fx)
+                if self.retreat_time > 0:
+                    # TODO different depend on type of enemy, might not shoot but explode
+                    # stop running and face the player
+                    self.update_action(constants.ACTION_IDLE)
+                    # shoot
+                    # TODO fixbug player change the direction then have to change direction as well
+                    self.shoot(bullet_group, shot_fx)
+                else:
+                    # if player take damage within 10 secs monster won't
+                    if player.last_shot_time != False and pygame.time.get_ticks() - player.last_shot_time <= constants.RETREAT_COOLDOWN: #retreat cooldown
+                        self.retreat_time = constants.RETREAT_TIME
+                    else:
+                        if self.direction == 1:
+                            ai_moving_right = True
+                        else:
+                            ai_moving_right = False
+                        ai_moving_left = not ai_moving_right
+                        self.move(ai_moving_left, ai_moving_right, world, bg_scroll, water_group, exit_group, dead_fx)
+                        self.update_action(constants.ACTION_RUN)
+                        self.move_counter += 1
+                        # update ai vision as the enemy moves
+                        self.vision.center = (self.rect.centerx + 75 * self.direction, self.rect.centery) # TODO constant
+                        # draw vision: 
+                        # pygame.draw.rect(screen, constants.RED, self.vision)
+                        if self.move_counter > constants.TILE_SIZE:
+                            self.direction *= -1
+                            self.move_counter *= -1
             else:
+                self.retreat_time = constants.RETREAT_TIME
                 if self.idling == False:
                     if self.direction == 1:
                         ai_moving_right = True
