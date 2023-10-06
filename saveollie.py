@@ -217,7 +217,7 @@ while run:
         health_bar.draw(screen, player.health)
         text = font.render(str(player.coin), True, constants.WHITE, constants.BLUE)
         textRect = text.get_rect()
-        textRect.center = (60, 110)
+        textRect.center = (75, 110)
 
         screen.blit(pygame.image.load('images/icons/coin.png').convert_alpha(), (10, 90))
         screen.blit(text, textRect)
