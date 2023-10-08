@@ -335,7 +335,7 @@ while run:
                 moving_right = True
             if event.key == pygame.K_SPACE:
                 shoot = True
-            if event.key == pygame.K_q:
+            if event.key == pygame.K_z or event.key == pygame.K_l:
                 grenade = True
             if (event.key == pygame.K_w or event.key == pygame.K_UP) and player.alive:
                 player.jump = True
@@ -351,7 +351,7 @@ while run:
                 moving_right = False
             if event.key == pygame.K_SPACE:
                 shoot = False
-            if event.key == pygame.K_q:
+            if event.key == pygame.K_z or event.key == pygame.K_l:
                 grenade = False
                 grenade_thrown = False
     pygame.display.update()
